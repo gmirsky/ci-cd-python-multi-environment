@@ -65,7 +65,7 @@ Configure required approvers in GitHub:
 
 1. Go to **Settings -> Environments**
 2. Create/update `promote-to-qa`, `promote-patch-to-qa`, `promote-patch-to-production`, and `promote-to-production`
-3. Add at least one **Required reviewer** to each environment
+3. Add at least one **Required reviewer** to each environment (max 5 reviewers per environment)
 
 Until approved, promotion jobs remain blocked.
 
