@@ -98,3 +98,65 @@ Apply these settings in GitHub for stronger promotion controls:
 
 - Promotion workflows in this repo open PRs (`development -> qa`, `qa -> main`) and are compatible with protected branches.
 - The refresh workflow force-pushes `development`; keep `development` less restrictive than `qa` and `main` to allow reset/refresh operations.
+
+## Manual promotion commands (outside PR workflows)
+
+Use these commands when you want to promote changes without opening PRs.
+
+### Cherry-pick specific commits
+
+Promote commits `7b74141` and `388c03d` from `development` to `qa`:
+
+```bash
+cd /Users/gregorymirsky/code/ci-cd-python-multi-environment
+git fetch origin
+git checkout qa
+git pull --ff-only origin qa
+git cherry-pick 7b74141 388c03d
+git push origin qa
+```
+
+Promote the same commits from `development` to `main`:
+
+```bash
+git checkout main
+git pull --ff-only origin main
+git cherry-pick 7b74141 388c03d
+git push origin main
+```
+
+### Promote full branches (no PR)
+
+Promote all changes from `development` to `qa`:
+
+```bash
+git fetch origin
+git checkout qa
+git pull --ff-only origin qa
+git merge --no-ff origin/development -m "Promote development to qa"
+git push origin qa
+```
+
+Promote all changes from `qa` to `main`:
+
+```bash
+git checkout main
+git pull --ff-only origin main
+git merge --no-ff origin/qa -m "Promote qa to production"
+git push origin main
+```
+
+### If conflicts occur
+
+```bash
+git status
+# resolve files manually, then:
+git add <files>
+```
+
+Continue or abort as needed:
+
+```bash
+git cherry-pick --continue   # or git merge --continue
+git cherry-pick --abort      # or git merge --abort
+```
