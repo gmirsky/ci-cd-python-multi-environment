@@ -1,0 +1,9 @@
+[project]
+name = "hello-world-multi-env"
+version = "0.1.0"
+description = "Hello World app for multi-environment branch workflow"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
