@@ -49,6 +49,19 @@ docker buildx build \
 
 Each promotion workflow creates a PR from source environment branch to target branch.
 
+These promotion workflows also use environment approval gates:
+
+- `promote-to-qa` for `development -> qa`
+- `promote-to-production` for `qa -> main`
+
+Configure required approvers in GitHub:
+
+1. Go to **Settings -> Environments**
+2. Create/update `promote-to-qa` and `promote-to-production`
+3. Add at least one **Required reviewer** to each environment
+
+Until approved, promotion jobs remain blocked.
+
 ## CI workflow
 
 - `.github/workflows/ci-test.yml`

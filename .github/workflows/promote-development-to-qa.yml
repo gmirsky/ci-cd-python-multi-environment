@@ -10,6 +10,8 @@ permissions:
 jobs:
   create-promotion-pr:
     runs-on: ubuntu-latest
+    environment:
+      name: promote-to-qa
     steps:
       - name: Create PR from development to qa
         uses: actions/github-script@v7
