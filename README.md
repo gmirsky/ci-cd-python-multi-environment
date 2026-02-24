@@ -10,9 +10,9 @@ Each branch can pin and run a different Python version.
 
 ## Suggested Python versions by branch
 
-- `development`: Python `3.11`
-- `qa`: Python `3.12`
-- `main`: Python `3.13`
+- `development`: Python `3.14.3`
+- `qa`: Python `3.14.3`
+- `main`: Python `3.14.2`
 
 Use branch-specific `.python-version` files (or branch-specific CI config) to enforce the interpreter per environment branch.
 
@@ -54,6 +54,17 @@ Each promotion workflow creates a PR from source environment branch to target br
 - `.github/workflows/ci-test.yml`
 
 This workflow runs `pytest` on pushes and pull requests for `development`, `qa`, and `main` using branch-appropriate Python versions.
+
+## Local helper commands
+
+- `make test` to run local tests
+- `make docker-buildx` to build multi-platform image (`linux/amd64,linux/arm64`)
+- `make docker-buildx-load` to build and load single-platform (`linux/amd64`) image into local Docker
+
+Optional overrides:
+
+- `make docker-buildx IMAGE=myrepo/hello-world:dev`
+- `make docker-buildx PLATFORMS=linux/arm64`
 
 ## Refresh workflow
 

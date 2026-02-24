@@ -25,14 +25,14 @@ jobs:
         ${{
           github.event_name == 'pull_request' &&
           (
-            github.base_ref == 'main' && '3.13' ||
-            github.base_ref == 'qa' && '3.12' ||
-            '3.11'
+            github.base_ref == 'main' && '3.14.2' ||
+            github.base_ref == 'qa' && '3.14.3' ||
+            '3.14.3'
           ) ||
           (
-            github.ref_name == 'main' && '3.13' ||
-            github.ref_name == 'qa' && '3.12' ||
-            '3.11'
+            github.ref_name == 'main' && '3.14.2' ||
+            github.ref_name == 'qa' && '3.14.3' ||
+            '3.14.3'
           )
         }}
     steps:
