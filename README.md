@@ -95,7 +95,7 @@ Apply these settings in GitHub for stronger promotion controls:
 - Require at least `1` approving review
 - Dismiss stale pull request approvals when new commits are pushed
 - Require conversation resolution before merging
-- Require status checks to pass before merging (`tests`)
+- Require status checks to pass before merging (`tests`, `gitleaks`)
 - Restrict direct pushes to `main`
 - (Optional) Restrict who can push/merge to release maintainers
 
@@ -104,7 +104,7 @@ Apply these settings in GitHub for stronger promotion controls:
 - Require a pull request before merging
 - Require at least `1` approving review
 - Require conversation resolution before merging
-- Require status checks to pass before merging (`tests`)
+- Require status checks to pass before merging (`tests`, `gitleaks`)
 - Restrict direct pushes to `qa`
 
 ### Notes
