@@ -3,6 +3,7 @@
 Repository pattern for branch-based environments:
 
 - `development` branch: active development environment
+- `patch` branch: hotfix/patch environment
 - `qa` branch: QA/staging validation environment
 - `main` branch: production environment
 
@@ -11,6 +12,7 @@ Each branch can pin and run a different Python version.
 ## Suggested Python versions by branch
 
 - `development`: Python `3.14.3`
+- `patch`: Python `3.14.2`
 - `qa`: Python `3.14.3`
 - `main`: Python `3.14.2`
 
@@ -19,6 +21,7 @@ Use branch-specific `.python-version` files (or branch-specific CI config) to en
 Version mapping files in this repo:
 
 - `environments/development.python-version`
+- `environments/patch.python-version`
 - `environments/qa.python-version`
 - `environments/main.python-version`
 
@@ -45,6 +48,8 @@ docker buildx build \
 ## Promotion workflows
 
 - `.github/workflows/promote-development-to-qa.yml`
+- `.github/workflows/promote-patch-to-qa.yml`
+- `.github/workflows/promote-patch-to-production.yml`
 - `.github/workflows/promote-qa-to-production.yml`
 
 Each promotion workflow creates a PR from source environment branch to target branch.
@@ -52,12 +57,14 @@ Each promotion workflow creates a PR from source environment branch to target br
 These promotion workflows also use environment approval gates:
 
 - `promote-to-qa` for `development -> qa`
+- `promote-patch-to-qa` for `patch -> qa`
+- `promote-patch-to-production` for `patch -> main`
 - `promote-to-production` for `qa -> main`
 
 Configure required approvers in GitHub:
 
 1. Go to **Settings -> Environments**
-2. Create/update `promote-to-qa` and `promote-to-production`
+2. Create/update `promote-to-qa`, `promote-patch-to-qa`, `promote-patch-to-production`, and `promote-to-production`
 3. Add at least one **Required reviewer** to each environment
 
 Until approved, promotion jobs remain blocked.
@@ -66,7 +73,7 @@ Until approved, promotion jobs remain blocked.
 
 - `.github/workflows/ci-test.yml`
 
-This workflow runs `pytest` on pushes and pull requests for `development`, `qa`, and `main` using branch-appropriate Python versions.
+This workflow runs `pytest` on pushes and pull requests for `development`, `patch`, `qa`, and `main` using branch-appropriate Python versions.
 
 ## Local helper commands
 
@@ -82,8 +89,9 @@ Optional overrides:
 ## Refresh workflow
 
 - `.github/workflows/refresh-development-from-production.yml`
+- `.github/workflows/refresh-patch-from-production.yml`
 
-This workflow is manually triggered and force-updates `development` from `main`, overlaying all existing code in `development`.
+These workflows are manually triggered and force-update `development` or `patch` from `main`, overlaying all existing code in the target branch.
 
 ## Recommended branch protection
 
@@ -110,7 +118,7 @@ Apply these settings in GitHub for stronger promotion controls:
 ### Notes
 
 - Promotion workflows in this repo open PRs (`development -> qa`, `qa -> main`) and are compatible with protected branches.
-- The refresh workflow force-pushes `development`; keep `development` less restrictive than `qa` and `main` to allow reset/refresh operations.
+- The refresh workflows force-push `development` and `patch`; keep them less restrictive than `qa` and `main` to allow reset/refresh operations.
 
 ## Manual promotion commands (outside PR workflows)
 
@@ -173,3 +181,35 @@ Continue or abort as needed:
 git cherry-pick --continue   # or git merge --continue
 git cherry-pick --abort      # or git merge --abort
 ```
+
+## Revert a merged pull request
+
+Use `git revert` to create a new commit that undoes a merged PR. This is safer than rewriting history.
+
+### Revert on `main`
+
+1. Find the merge commit SHA for the PR (for example from the PR page or `git log`).
+2. Revert the merge commit and push the new revert commit.
+
+```bash
+cd /Users/gregorymirsky/code/ci-cd-python-multi-environment
+git checkout main
+git pull --ff-only origin main
+git revert -m 1 <merge-commit-sha>
+git push origin main
+```
+
+### Revert on `qa`
+
+```bash
+cd /Users/gregorymirsky/code/ci-cd-python-multi-environment
+git checkout qa
+git pull --ff-only origin qa
+git revert -m 1 <merge-commit-sha>
+git push origin qa
+```
+
+Notes:
+
+- Use `-m 1` to select the mainline parent of the merge commit.
+- If conflicts occur, resolve them, then run `git add <files>` and `git revert --continue`.
