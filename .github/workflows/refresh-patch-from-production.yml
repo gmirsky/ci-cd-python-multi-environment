@@ -1,0 +1,28 @@
+name: Refresh Patch from Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Reset patch branch to production
+        run: |
+          git fetch origin main patch
+          git checkout -B patch origin/patch
+          git reset --hard origin/main
+          git push --force-with-lease origin patch

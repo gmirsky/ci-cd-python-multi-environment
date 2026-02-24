@@ -1,4 +1,4 @@
-name: Promote Development to QA
+name: Promote Patch to Production
 
 on:
   workflow_dispatch:
@@ -11,16 +11,16 @@ jobs:
   create-promotion-pr:
     runs-on: ubuntu-latest
     environment:
-      name: promote-to-qa
+      name: promote-patch-to-production
     steps:
-      - name: Create PR from development to qa
+      - name: Create PR from patch to main
         uses: actions/github-script@v7
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const head = 'development';
-            const base = 'qa';
+            const head = 'patch';
+            const base = 'main';
 
             const existing = await github.rest.pulls.list({
               owner,
@@ -38,10 +38,10 @@ jobs:
             const pr = await github.rest.pulls.create({
               owner,
               repo,
-              title: 'Promote development to qa',
+              title: 'Promote patch to production',
               head,
               base,
-              body: 'Automated promotion PR from development to qa.',
+              body: 'Automated promotion PR from patch to main (production).',
             });
 
             core.info(`Created PR #${pr.data.number}`);
